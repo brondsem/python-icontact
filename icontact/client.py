@@ -71,7 +71,8 @@ class IContactClient(object):
     NAMESPACE = 'http://www.w3.org/1999/xlink'
 
     def __init__(self, api_key, username, password, auth_handler=None,
-                 max_retry_count=5, account_id=None, client_folder_id=None, url=ICONTACT_API_URL):
+                 max_retry_count=5, account_id=None, client_folder_id=None, url=ICONTACT_API_URL,
+                 user_agent=None):
         """
         - api_key: the API Key assigned for the OA iContact client
         - username: the iContact web site login username
@@ -106,6 +107,7 @@ class IContactClient(object):
         # Track number of retries we have performed
         self.retry_count = 0
         self.url = url
+        self.user_agent = user_agent
 
     def _get_account_id(self):
         self.account_id = self.account().accountId
@@ -151,6 +153,8 @@ class IContactClient(object):
                    'Api-AppId':self.api_key,
                    'Api-Username':self.username,
                    'API-Password':self.password }
+        if self.user_agent:
+            headers['User-Agent'] = self.user_agent
 
         # TODO: try request for urllib2.HTTPError for 503 to do rate limit retry
 
